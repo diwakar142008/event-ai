@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: eventora-api
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python -m app.ml.train --all
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: AI_PROVIDER
+        value: none
+      - key: DATABASE_URL
+        fromDatabase:
+          name: eventora-db
+          property: connectionString
+      - key: CORS_ORIGINS
+        fromService:
+          type: web
+          name: eventora-web
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    name: eventora-web
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    startCommand: npm start -- --hostname 0.0.0.0
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: eventora-api
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  - name: eventora-db
+    plan: free
+    region: singapore

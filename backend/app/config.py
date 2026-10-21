@@ -51,6 +51,16 @@ class Settings(BaseSettings):
     @property
     def sqlalchemy_url(self) -> str:
         if self.database_url:
+            # Render and several other hosts provide postgres:// URLs. Use
+            # Psycopg 3 explicitly so PostgreSQL works without psycopg2.
+            if self.database_url.startswith("postgres://"):
+                return self.database_url.replace(
+                    "postgres://", "postgresql+psycopg://", 1
+                )
+            if self.database_url.startswith("postgresql://"):
+                return self.database_url.replace(
+                    "postgresql://", "postgresql+psycopg://", 1
+                )
             return self.database_url
         return f"sqlite:///{(BACKEND_DIR / 'eventora.db').as_posix()}"
 

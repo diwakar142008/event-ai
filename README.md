@@ -429,6 +429,20 @@ npm run build     # production build with TypeScript checking
 
 ## Deployment
 
+### Render Blueprint
+
+The repository includes `render.yaml` to create the frontend, API, and
+PostgreSQL database together. In Render, create a new Blueprint and select
+`diwakar142008/event-ai`; Render builds the ML artifacts, connects the database,
+sets the frontend API URL and CORS origin, and deploys both services.
+
+This configuration uses Render's free plans for a low-cost demo. Free web
+services sleep when idle, and the free PostgreSQL database expires 30 days after
+creation. Upgrade the database before then to retain data. The API has no
+authentication or per-user access controls: anyone can read and change event
+records. Use only non-sensitive demo data until authentication is implemented.
+See [Render's free plan limits](https://render.com/docs/free).
+
 ### Backend (Render / Railway / Fly.io / any container host)
 
 The repository includes a ready-to-use `render.yaml` and a `Dockerfile`.
