@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-50: #f7f6f4;
+  --color-ink-100: #eeece7;
+  --color-ink-200: #ddd9d1;
+  --color-ink-300: #c3bdb1;
+  --color-ink-400: #9d9587;
+  --color-ink-500: #7a7264;
+  --color-ink-600: #5d574d;
+  --color-ink-700: #443f38;
+  --color-ink-800: #2c2925;
+  --color-ink-900: #1a1815;
+  --color-ink-950: #0f0e0c;
+
+  --color-brand-50: #fdf4f8;
+  --color-brand-100: #fce7f0;
+  --color-brand-200: #f9cede;
+  --color-brand-300: #f2a9c5;
+  --color-brand-400: #e87ba5;
+  --color-brand-500: #d94e83;
+  --color-brand-600: #c22f68;
+  --color-brand-700: #a42153;
+  --color-brand-800: #871f47;
+  --color-brand-900: #721e3d;
+
+  --color-gold-300: #f2d492;
+  --color-gold-400: #e3bd6c;
+  --color-gold-500: #d3a24b;
+  --color-gold-600: #b78336;
+
+  --color-sage-400: #7fae8b;
+  --color-sage-500: #5f8f6c;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+:root {
+  --background: #faf9f7;
+  --foreground: #1a1815;
+  --surface: #ffffff;
+  --surface-muted: #f7f6f4;
+  --border: #e6e2db;
+  --ring: #d94e83;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #121110;
+    --foreground: #f2efe9;
+    --surface: #1a1917;
+    --surface-muted: #232220;
+    --border: #33312d;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Subtle celebration gradient used behind the hero panels. */
+.celebration-wash {
+  background:
+    radial-gradient(
+      60rem 30rem at 10% -10%,
+      color-mix(in srgb, var(--color-brand-200) 45%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      45rem 25rem at 95% 0%,
+      color-mix(in srgb, var(--color-gold-300) 35%, transparent),
+      transparent 55%
+    );
+}
+
+@media (prefers-color-scheme: dark) {
+  .celebration-wash {
+    background:
+      radial-gradient(
+        60rem 30rem at 10% -10%,
+        color-mix(in srgb, var(--color-brand-900) 55%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        45rem 25rem at 95% 0%,
+        color-mix(in srgb, var(--color-gold-600) 22%, transparent),
+        transparent 55%
+      );
+  }
+}
+
+/* Hide the number input spinners — the forms use sliders and explicit fields. */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}

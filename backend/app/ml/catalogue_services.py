@@ -1,0 +1,67 @@
+"""Service bundle entries for the recommendation catalogue."""
+from __future__ import annotations
+
+from app.ml.catalogue import CatalogueItem
+
+SERVICES: list[CatalogueItem] = [
+    CatalogueItem(
+        name="Full-Service Wedding Management",
+        category="service",
+        event_types=("wedding",),
+        styles=("Classic", "Luxury"),
+        price_band="premium",
+        cost_per_guest=750,
+        tags=("planner", "vendor coordination", "logistics"),
+        description="End-to-end planning, vendor coordination and on-day logistics.",
+        popularity=0.91,
+        keywords=("planner", "management", "full service", "end to end"),
+    ),
+    CatalogueItem(
+        name="Vendor Coordination Lite",
+        category="service",
+        event_types=("birthday", "anniversary", "college", "community"),
+        styles=("Minimal", "Classic"),
+        price_band="mid",
+        cost_per_guest=200,
+        tags=("vendor sourcing", "scheduling"),
+        description="A curated vendor shortlist, booking schedule and timeline sheets.",
+        popularity=0.75,
+        keywords=("vendor", "coordination", "partial", "planning help"),
+    ),
+    CatalogueItem(
+        name="Day-Of Event Operations",
+        category="service",
+        event_types=("corporate", "wedding", "anniversary"),
+        styles=("Modern", "Classic"),
+        price_band="mid",
+        cost_per_guest=300,
+        tags=("on-site", "staff", "run sheet"),
+        description="On-site managers, event staff and a printed run sheet.",
+        popularity=0.78,
+        keywords=("operations", "on site", "staff", "management"),
+    ),
+    CatalogueItem(
+        name="Destination Wedding Concierge",
+        category="service",
+        event_types=("wedding",),
+        styles=("Luxury", "Classic"),
+        price_band="premium",
+        cost_per_guest=1100,
+        tags=("travel", "guest logistics", "stay"),
+        description="Guest travel coordination, stay planning and local vendor management.",
+        popularity=0.72,
+        keywords=("destination", "travel", "stay", "concierge", "outstation"),
+    ),
+    CatalogueItem(
+        name="Budget-First Planning Kit",
+        category="service",
+        event_types=("community", "college", "birthday"),
+        styles=("Minimal", "Festive"),
+        price_band="budget",
+        cost_per_guest=120,
+        tags=("templates", "diy", "checklists"),
+        description="Planning templates, printable checklists and DIY decoration guides.",
+        popularity=0.73,
+        keywords=("budget", "diy", "template", "cheap", "low cost"),
+    ),
+]

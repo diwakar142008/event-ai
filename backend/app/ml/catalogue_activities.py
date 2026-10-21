@@ -1,0 +1,67 @@
+"""Activity entries for the recommendation catalogue."""
+from __future__ import annotations
+
+from app.ml.catalogue import CatalogueItem
+
+ACTIVITIES: list[CatalogueItem] = [
+    CatalogueItem(
+        name="Sangeet & Dance Showcase",
+        category="activity",
+        event_types=("wedding", "anniversary", "birthday"),
+        styles=("Festive", "Classic"),
+        price_band="mid",
+        cost_per_guest=250,
+        tags=("live performance", "dj", "choreography"),
+        description="Choreographed performances, a live band slot and a DJ set.",
+        popularity=0.88,
+        keywords=("sangeet", "music", "dance", "dj", "entertainment"),
+    ),
+    CatalogueItem(
+        name="Live Music & Acoustic Set",
+        category="activity",
+        event_types=("wedding", "corporate", "community"),
+        styles=("Classic", "Luxury"),
+        price_band="premium",
+        cost_per_guest=320,
+        tags=("acoustic", "quartet", "strings"),
+        description="A live acoustic quartet plus a roaming vocalist during cocktails.",
+        popularity=0.77,
+        keywords=("music", "live band", "acoustic", "elegant"),
+    ),
+    CatalogueItem(
+        name="Interactive Game Corner",
+        category="activity",
+        event_types=("birthday", "college", "community"),
+        styles=("Festive", "Modern"),
+        price_band="budget",
+        cost_per_guest=120,
+        tags=("games", "photobooth", "prizes"),
+        description="A hosted games corner with a photo booth and small prizes.",
+        popularity=0.8,
+        keywords=("games", "fun", "activities", "students", "youth"),
+    ),
+    CatalogueItem(
+        name="Kids Carnival Corner",
+        category="activity",
+        event_types=("birthday", "community", "college"),
+        styles=("Festive", "Minimal"),
+        price_band="budget",
+        cost_per_guest=90,
+        tags=("games", "clown", "crafts"),
+        description="A supervised kids' zone with crafts, games and a performer.",
+        popularity=0.68,
+        keywords=("kids", "children", "family", "carnival"),
+    ),
+    CatalogueItem(
+        name="Keynote & Panel Session",
+        category="activity",
+        event_types=("corporate", "college"),
+        styles=("Modern", "Minimal"),
+        price_band="mid",
+        cost_per_guest=140,
+        tags=("speaker", "panel", "led"),
+        description="A hosted keynote, a moderated panel and a branded LED screen.",
+        popularity=0.71,
+        keywords=("seminar", "panel", "conference", "speaker", "business"),
+    ),
+]

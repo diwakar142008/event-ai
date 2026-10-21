@@ -1,0 +1,67 @@
+"""Catering entries for the recommendation catalogue."""
+from __future__ import annotations
+
+from app.ml.catalogue import CatalogueItem
+
+CATERING: list[CatalogueItem] = [
+    CatalogueItem(
+        name="Multi-Cuisine Live Counters",
+        category="catering",
+        event_types=("wedding", "corporate", "college"),
+        styles=("Classic", "Modern"),
+        price_band="premium",
+        cost_per_guest=1600,
+        tags=("live counters", "regional", "chef stations"),
+        description="Live regional counters, chef stations and a dessert cart.",
+        popularity=0.9,
+        keywords=("food", "catering", "multi cuisine", "live counter", "buffet"),
+    ),
+    CatalogueItem(
+        name="Classic Wedding Menu",
+        category="catering",
+        event_types=("wedding",),
+        styles=("Traditional", "Classic"),
+        price_band="mid",
+        cost_per_guest=950,
+        tags=("thali", "starter", "sweets", "savory"),
+        description="Two starters, regional mains, sweets and a filtered beverage service.",
+        popularity=0.9,
+        keywords=("wedding food", "thali", "indian", "traditional", "menu"),
+    ),
+    CatalogueItem(
+        name="Grazing & Cocktail Evening",
+        category="catering",
+        event_types=("wedding", "corporate", "anniversary"),
+        styles=("Modern", "Luxury"),
+        price_band="premium",
+        cost_per_guest=1450,
+        tags=("grazing tables", "cocktails", "canapes"),
+        description="Grazing tables, canapes and a signature cocktail bar.",
+        popularity=0.76,
+        keywords=("cocktail", "grazing", "canape", "evening", "modern"),
+    ),
+    CatalogueItem(
+        name="Simple Buffet & Snacks",
+        category="catering",
+        event_types=("college", "community", "birthday"),
+        styles=("Minimal", "Festive"),
+        price_band="budget",
+        cost_per_guest=500,
+        tags=("buffet", "snacks", "chai"),
+        description="A straightforward buffet, two snack counters and unlimited chai.",
+        popularity=0.78,
+        keywords=("budget", "buffet", "snacks", "simple", "cheap"),
+    ),
+    CatalogueItem(
+        name="Vegetarian Feast Spread",
+        category="catering",
+        event_types=("wedding", "community", "college"),
+        styles=("Traditional", "Classic"),
+        price_band="mid",
+        cost_per_guest=820,
+        tags=("pure veg", "thali", "regional", "banquet"),
+        description="A full pure-vegetarian banquet with regional thalis and mocktails.",
+        popularity=0.83,
+        keywords=("vegetarian", "veg", "thali", "banquet", "jain"),
+    ),
+]

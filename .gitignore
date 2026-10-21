@@ -1,0 +1,44 @@
+﻿# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Environment & secrets (never commit) ---
+.env
+.env.local
+*.env
+!.env.example
+
+# --- Local database ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- ML artifacts ---
+# Regenerate with: python -m app.ml.train --all
+backend/ml_artifacts/
+
+# --- Node / Next.js ---
+node_modules/
+.next/
+out/
+next-env.d.ts
+.turbo/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Local scratch ---
+*.log
+*.tmp
