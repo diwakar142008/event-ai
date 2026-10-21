@@ -13,19 +13,23 @@ import {
   selectClass,
 } from "@/components/ui";
 import { api } from "@/lib/api";
-import { CHECKLIST_STATUSES, formatINR, statusTone } from "@/lib/format";
+import { CHECKLIST_STATUSES, formatINR } from "@/lib/format";
 
 export function ChecklistCard() {
   const { selectedEvent, selectedEventId, refreshSelected } = useEventora();
   const [filter, setFilter] = useState<string>("all");
   const [newItem, setNewItem] = useState("");
   const [busy, setBusy] = useState(false);
+  const [search, setSearch] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const items = selectedEvent?.checklist ?? [];
+  const items = useMemo(() => selectedEvent?.checklist ?? [], [selectedEvent?.checklist]);
 
   const grouped = useMemo(() => {
-    const visible =
-      filter === "all" ? items : items.filter((item) => item.status === filter);
+    const visible = items.filter((item) =>
+      (filter === "all" || item.status === filter) &&
+      item.item.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
+    );
     const map = new Map<string, typeof visible>();
     visible.forEach((item) => {
       const list = map.get(item.category) ?? [];
@@ -33,7 +37,7 @@ export function ChecklistCard() {
       map.set(item.category, list);
     });
     return Array.from(map.entries());
-  }, [items, filter]);
+  }, [items, filter, search]);
 
   const completed = items.filter((item) => item.status === "completed").length;
   const totalCost = items.reduce((sum, item) => sum + (item.estimated_cost || 0), 0);
@@ -41,9 +45,12 @@ export function ChecklistCard() {
   async function setStatus(itemId: string, status: string) {
     if (!selectedEventId) return;
     setBusy(true);
+    setError(null);
     try {
       await api.updateChecklistItem(selectedEventId, itemId, { status });
       await refreshSelected();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update this task.");
     } finally {
       setBusy(false);
     }
@@ -52,6 +59,7 @@ export function ChecklistCard() {
   async function addItem() {
     if (!selectedEventId || !newItem.trim()) return;
     setBusy(true);
+    setError(null);
     try {
       await api.addChecklistItem(selectedEventId, {
         category: "Custom",
@@ -59,6 +67,8 @@ export function ChecklistCard() {
       });
       setNewItem("");
       await refreshSelected();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not add this task.");
     } finally {
       setBusy(false);
     }
@@ -66,10 +76,14 @@ export function ChecklistCard() {
 
   async function removeItem(itemId: string) {
     if (!selectedEventId) return;
+    if (!window.confirm("Remove this task from the checklist?")) return;
     setBusy(true);
+    setError(null);
     try {
       await api.deleteChecklistItem(selectedEventId, itemId);
       await refreshSelected();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not remove this task.");
     } finally {
       setBusy(false);
     }
@@ -85,7 +99,9 @@ export function ChecklistCard() {
             : "Generate a plan to populate the checklist, or add tasks yourself."
         }
         action={
-          <select
+          <div className="flex flex-wrap gap-2">
+          <input aria-label="Search checklist" className={`${inputClass} w-44`} value={search} placeholder="Search tasks" onChange={(event) => setSearch(event.target.value)} />
+          <select aria-label="Filter checklist by status"
             className={`${selectClass} w-40`}
             value={filter}
             onChange={(event) => setFilter(event.target.value)}
@@ -97,8 +113,11 @@ export function ChecklistCard() {
               </option>
             ))}
           </select>
+          </div>
         }
       />
+      {error ? <p role="alert" className="px-5 pt-4 text-sm text-brand-700">{error}</p> : null}
+      <p className="sr-only" aria-live="polite">{busy ? "Saving checklist changes" : "Checklist changes saved"}</p>
 
       {items.length === 0 ? (
         <EmptyState

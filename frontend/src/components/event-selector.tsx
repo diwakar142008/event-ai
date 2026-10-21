@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import { useEventora } from "@/components/eventora-provider";
-import { daysUntil, formatDate, titleCase } from "@/lib/format";
+import { formatDate, titleCase } from "@/lib/format";
+import { selectClass } from "@/components/ui";
 
 export function EventSelector() {
   const { events, selectedEventId, selectEvent } = useEventora();
@@ -15,28 +16,11 @@ export function EventSelector() {
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {events.map((event) => {
-        const active = event.id === selectedEventId;
-        const days = daysUntil(event.event_date);
-        return (
-          <button
-            key={event.id}
-            onClick={() => selectEvent(event.id)}
-            className={`rounded-xl border px-3 py-2 text-left transition-colors ${
-              active
-                ? "border-brand-400 bg-brand-500/10"
-                : "border-[var(--border)] bg-[var(--surface)] hover:border-brand-300"
-            }`}
-          >
-            <span className="block text-sm font-medium">{event.name}</span>
-            <span className="block text-xs text-ink-500">
-              {titleCase(event.event_type)} | {formatDate(event.event_date)}
-              {days >= 0 ? ` | ${days} days away` : ""}
-            </span>
-          </button>
-        );
-      })}
-    </div>
+    <label className="block min-w-0">
+      <span className="sr-only">Selected event</span>
+      <select className={`${selectClass} min-w-[13rem] max-w-full`} value={selectedEventId ?? ""} onChange={(event) => selectEvent(event.target.value || null)}>
+        {events.map((event) => <option key={event.id} value={event.id}>{event.name} · {titleCase(event.event_type)} · {formatDate(event.event_date)} · {event.guest_count} guests</option>)}
+      </select>
+    </label>
   );
 }

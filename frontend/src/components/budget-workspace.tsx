@@ -9,14 +9,13 @@ import {
   Button,
   Card,
   CardHeader,
-  Caveat,
   EmptyState,
   ErrorBanner,
   Spinner,
   inputClass,
 } from "@/components/ui";
 import { api, type BudgetRisk, type CostPrediction } from "@/lib/api";
-import { formatINR, formatNumber, riskTone } from "@/lib/format";
+import { formatINR, riskTone } from "@/lib/format";
 
 export function BudgetWorkspace() {
   const { selectedEvent, selectedEventId, updateEvent, loading } = useEventora();
@@ -61,7 +60,8 @@ export function BudgetWorkspace() {
   }, [selectedEvent, contingency]);
 
   useEffect(() => {
-    void analyse();
+    const timer = window.setTimeout(() => void analyse(), 0);
+    return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEventId, selectedEvent?.budget, selectedEvent?.guest_count]);
 
@@ -77,7 +77,7 @@ export function BudgetWorkspace() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Budget</h1>
           <p className="text-sm text-ink-500">
-            Cost estimate, variance against budget and risk of going over.
+            See what your event may cost and whether it fits your budget.
           </p>
         </div>
         <EventSelector />
@@ -95,7 +95,7 @@ export function BudgetWorkspace() {
           <Card>
             <CardHeader
               title="Estimate"
-              description="Random Forest cost model (Model A) trained on a synthetic dataset."
+              description="Use this estimate to plan your spending before you contact vendors."
               action={
                 <Button onClick={() => void analyse()} disabled={busy} size="sm">
                   {busy ? "Running..." : "Re-run"}
@@ -114,9 +114,9 @@ export function BudgetWorkspace() {
                       hint={`${formatINR(cost.per_guest_cost)} per guest`}
                     />
                     <Metric
-                      label="Planning range"
+                      label="Illustrative range"
                       value={`${formatINR(cost.lower_bound)} - ${formatINR(cost.upper_bound)}`}
-                      hint="Model error band (1x training RMSE)"
+                      hint="A rough guide, not a guaranteed price"
                     />
                     <Metric
                       label="Your budget"
@@ -153,8 +153,9 @@ export function BudgetWorkspace() {
                     />
                   </div>
 
-                  <Caveat>{cost.data_note}</Caveat>
-                  <p className="text-xs text-ink-500">{cost.confidence_note}</p>
+                  <p className="text-xs text-ink-500">
+                    Estimates use sample data, not live vendor quotes. Check current prices with local vendors.
+                  </p>
 
                   {topFeatures.length > 0 ? (
                     <div>
@@ -193,7 +194,7 @@ export function BudgetWorkspace() {
           <Card>
             <CardHeader
               title="Budget risk"
-              description="Decision Tree classifier (Model C) labels the risk of going over budget."
+              description="See whether your budget can cover the estimate and your chosen contingency."
             />
             <div className="space-y-5 px-5 py-5">
               <div className="flex flex-wrap items-end gap-3">

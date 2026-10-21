@@ -14,6 +14,14 @@ def test_health_reports_models_and_database(client: TestClient) -> None:
     assert body["models_loaded"]["risk_model"] is True
 
 
+def test_api_sets_browser_security_headers(client: TestClient) -> None:
+    response = client.get("/api/health")
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["x-frame-options"] == "DENY"
+    assert response.headers["referrer-policy"] == "strict-origin-when-cross-origin"
+    assert response.headers["permissions-policy"] == "camera=(), microphone=(), geolocation=()"
+
+
 def test_vocabulary_endpoint_lists_all_options(client: TestClient) -> None:
     response = client.get("/api/vocabulary")
     assert response.status_code == 200

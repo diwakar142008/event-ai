@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { useEventora } from "@/components/eventora-provider";
 import { EventSelector } from "@/components/event-selector";
 import {
-  Badge,
   Button,
   Card,
   CardHeader,
@@ -40,8 +39,11 @@ export function AssistantWorkspace() {
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setTurns([]);
-    setNotice(null);
+    const timer = window.setTimeout(() => {
+      setTurns([]);
+      setNotice(null);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [selectedEventId]);
 
   useEffect(() => {

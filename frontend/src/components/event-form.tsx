@@ -32,7 +32,7 @@ export function EventForm({
   onCreated?: () => void;
   onCancel?: () => void;
 }) {
-  const { vocabulary, createEvent } = useEventora();
+  const { events, vocabulary, createEvent } = useEventora();
   const [form, setForm] = useState<EventPayload>(DEFAULT_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,9 +58,36 @@ export function EventForm({
       return;
     }
 
+    const payload = { ...form, name: form.name.trim() };
+    const normalizedPreferences = [...payload.preferences].sort();
+    const matchingEvent = events.find((existing) =>
+      existing.name.trim().toLocaleLowerCase() === payload.name.toLocaleLowerCase() &&
+      existing.event_type === payload.event_type &&
+      existing.event_date === payload.event_date &&
+      existing.city === payload.city &&
+      existing.guest_count === payload.guest_count &&
+      existing.budget === payload.budget &&
+      existing.theme === payload.theme &&
+      existing.style === payload.style &&
+      [...existing.preferences].sort().join("|") === normalizedPreferences.join("|") &&
+      existing.venue_type === payload.venue_type &&
+      existing.duration_hours === payload.duration_hours &&
+      existing.catering_level === payload.catering_level &&
+      existing.decoration_level === payload.decoration_level &&
+      existing.photography === payload.photography,
+    );
+    if (
+      matchingEvent &&
+      !window.confirm(
+        `“${payload.name}” already exists with these same details. Create another copy anyway?`,
+      )
+    ) {
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await createEvent({ ...form, name: form.name.trim() });
+      await createEvent(payload);
       setForm(DEFAULT_FORM);
       onCreated?.();
     } catch (err) {

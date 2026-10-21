@@ -21,7 +21,7 @@ export function TimelineCard() {
   const [phase, setPhase] = useState<"preparation" | "event_day">("preparation");
   const [offset, setOffset] = useState(-14);
 
-  const items = selectedEvent?.timeline ?? [];
+  const items = useMemo(() => selectedEvent?.timeline ?? [], [selectedEvent?.timeline]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, typeof items>();

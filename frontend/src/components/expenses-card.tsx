@@ -21,7 +21,6 @@ export function ExpensesCard() {
   const [actual, setActual] = useState(0);
 
   const expenses = selectedEvent?.expenses ?? [];
-  const estimatedTotal = expenses.reduce((sum, e) => sum + (e.estimated || 0), 0);
   const actualTotal = expenses.reduce(
     (sum, e) => sum + (e.actual ?? e.estimated ?? 0),
     0,

@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -48,6 +49,7 @@ export function EventoraProvider({ children }: { children: ReactNode }) {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const selectedLoadVersion = useRef(0);
 
   const loadEvents = useCallback(async () => {
     const list = await api.listEvents();
@@ -56,13 +58,16 @@ export function EventoraProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadSelected = useCallback(async (id: string | null) => {
+    const version = ++selectedLoadVersion.current;
     if (!id) {
       setSelectedEvent(null);
       return;
     }
     try {
-      setSelectedEvent(await api.getEvent(id));
+      const event = await api.getEvent(id);
+      if (version === selectedLoadVersion.current) setSelectedEvent(event);
     } catch (err) {
+      if (version !== selectedLoadVersion.current) return;
       if (err instanceof ApiError && err.status === 404) {
         setSelectedEvent(null);
         setSelectedEventId(null);
@@ -89,6 +94,9 @@ export function EventoraProvider({ children }: { children: ReactNode }) {
       setHealth(status);
 
       let target = selectedEventId;
+      if (!target && typeof window !== "undefined") {
+        target = window.localStorage.getItem(STORAGE_KEY);
+      }
       if (!target || !list.some((event) => event.id === target)) {
         target = list.length > 0 ? list[0].id : null;
       }
@@ -113,7 +121,8 @@ export function EventoraProvider({ children }: { children: ReactNode }) {
   }, [loadSelected, selectedEventId]);
 
   useEffect(() => {
-    void refresh();
+    const timer = window.setTimeout(() => void refresh(), 0);
+    return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

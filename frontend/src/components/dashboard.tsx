@@ -1,7 +1,8 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 import { useEventora } from "@/components/eventora-provider";
 import { EventForm } from "@/components/event-form";
@@ -11,18 +12,28 @@ import {
   Button,
   Card,
   CardHeader,
-  Caveat,
   EmptyState,
   ErrorBanner,
   Spinner,
 } from "@/components/ui";
 import { daysUntil, formatDate, formatINR, titleCase } from "@/lib/format";
 
+const CinematicScene = dynamic(() => import("@/components/cinematic-scene"), {
+  ssr: false,
+  loading: () => null,
+});
+
+const JOURNEY_LINKS = [
+  { href: "/plan", label: "Plan" },
+  { href: "/budget", label: "Budget" },
+  { href: "/insights", label: "Insights" },
+  { href: "/assistant", label: "Assistant" },
+];
+
 export function Dashboard() {
   const {
     events,
     selectedEvent,
-    selectedEventId,
     health,
     loading,
     error,
@@ -31,43 +42,49 @@ export function Dashboard() {
   } = useEventora();
   const [showForm, setShowForm] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [journeyStarted, setJourneyStarted] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
-  if (loading) {
-    return <Spinner label="Loading your events" />;
+  useEffect(() => {
+    if (showForm) formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [showForm]);
+
+  function beginJourney() {
+    setJourneyStarted(true);
+    setShowForm(true);
+    window.setTimeout(() => setJourneyStarted(false), 800);
   }
 
   return (
-    <div className="space-y-8">
-      <section className="celebration-wash overflow-hidden rounded-3xl border border-[var(--border)] px-6 py-10 sm:px-10">
-        <div className="max-w-3xl">
-          <Badge className="border-brand-500/30 bg-brand-500/10 text-brand-700">
-            Smart Celebration Planner
-          </Badge>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Plan the celebration, not the guesswork.
-          </h1>
-          <p className="mt-3 max-w-2xl text-ink-600">
-            Eventora combines three machine-learning models with AI-assisted
-            planning to give you a cost range, a budget-risk read, a practical
-            checklist and a day-of schedule for any event.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            <Button onClick={() => setShowForm((value) => !value)}>
-              {showForm ? "Close form" : "Create an event"}
-            </Button>
-            <Link
-              href="/plan"
-              className="inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium transition-colors hover:bg-ink-50"
-            >
-              Open the planner
-            </Link>
-          </div>
+    <div>
+      <section className={`cinematic-hero${journeyStarted ? " journey-started" : ""}`} aria-labelledby="journey-title">
+        <CinematicScene />
+        <div className="cinematic-grading" aria-hidden="true" />
+        <header className="cinematic-nav">
+          <Link href="/" className="cinematic-brand" aria-label="Eventora AI home">Eventora <span>AI</span></Link>
+          <button type="button" className="cinematic-menu-button" aria-expanded={menuOpen} aria-controls="journey-menu" onClick={() => setMenuOpen((open) => !open)}>
+            <span>{menuOpen ? "CLOSE" : "MENU"}</span><span className={`menu-glyph${menuOpen ? " is-open" : ""}`} aria-hidden="true"><i /><i /></span>
+          </button>
+          {menuOpen ? <nav id="journey-menu" className="cinematic-menu" aria-label="Eventora sections">
+            {JOURNEY_LINKS.map((item, index) => <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}><span>0{index + 1}</span>{item.label}</Link>)}
+            <button type="button" onClick={() => { setMenuOpen(false); beginJourney(); }}><span>05</span>Create an event</button>
+          </nav> : null}
+        </header>
+        <div className="cinematic-copy">
+          <p className="cinematic-eyebrow">A new way to celebrate</p>
+          <h1 id="journey-title">Your <span>Journey</span></h1>
+          <p className="cinematic-description">From your first idea to the final unforgettable moment, plan every detail with intelligence and imagination.</p>
+          <button type="button" className="journey-cta" onClick={beginJourney}>Begin your journey <span aria-hidden="true">↗</span></button>
         </div>
+        <div className="cinematic-footnote" aria-hidden="true"><span>Make the moment yours</span><span>Scroll to explore <b>↓</b></span></div>
       </section>
 
+      <section className="overview-workspace mx-auto max-w-7xl space-y-8 px-4 py-12 sm:px-6 sm:py-16" aria-label="Event planning workspace">
       {error ? <ErrorBanner message={error} onRetry={() => void refresh()} /> : null}
 
       {showForm ? (
+        <div ref={formRef}>
         <Card>
           <CardHeader
             title="New event"
@@ -80,9 +97,12 @@ export function Dashboard() {
             />
           </div>
         </Card>
+        </div>
       ) : null}
 
-      <Card>
+      {loading ? <Spinner label="Loading your events" /> : null}
+
+      {!loading ? <Card>
         <CardHeader
           title="Your events"
           description={
@@ -104,9 +124,9 @@ export function Dashboard() {
             <EventSelector />
           )}
         </div>
-      </Card>
+      </Card> : null}
 
-      {selectedEvent ? (
+      {!loading && selectedEvent ? (
         <Card>
           <CardHeader
             title={selectedEvent.name}
@@ -195,7 +215,7 @@ export function Dashboard() {
         </Card>
       ) : null}
 
-      {health ? (
+      {!loading && health ? (
         <Card>
           <CardHeader
             title="System status"
@@ -220,6 +240,7 @@ export function Dashboard() {
           </div>
         </Card>
       ) : null}
+      </section>
     </div>
   );
 }
